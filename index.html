@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Leer el Cielo · Jornadas Astronómicas</title>
 <meta name="description" content="Leer el Cielo: jornadas astronómicas en la Biblioteca Central Estatal Wigberto Jiménez Moreno, León, Guanajuato. Charlas, talleres, planetario y observación con telescopios.">
-<meta property="og:title" content="Leer el Cielo · Una noche con Saturno">
-<meta property="og:description" content="Jornada Astronómica de Otoño · Viernes 23 de octubre de 2026 · 16:00 a 21:00 h">
+<meta property="og:title" content="Leer el Cielo · Jornadas Astronómicas">
+<meta property="og:description" content="Próxima jornada: Una noche con Saturno · Viernes 23 de octubre de 2026 · 16:00 a 21:00 h">
 <meta property="og:image" content="jornadas/otono-2026/poster.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%23FFC72C'/%3E%3Cellipse cx='32' cy='32' rx='28' ry='9' fill='none' stroke='%23FFC72C' stroke-width='4' transform='rotate(-20 32 32)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,16 +23,100 @@
       <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="13" fill="currentColor"/><ellipse cx="32" cy="32" rx="28" ry="9" fill="none" stroke="currentColor" stroke-width="3.5" transform="rotate(-20 32 32)"/></svg>
       <span>Leer el <b>Cielo</b></span>
     </a>
-    <!-- Las pestañas se generan desde jornadas/jornadas.json -->
-    <nav class="year-tabs" role="tablist" aria-label="Jornadas"></nav>
+    <!-- Inicio · jornada más reciente · jornadas anteriores (se completa desde jornadas/jornadas.json) -->
+    <nav class="year-tabs" aria-label="Secciones">
+      <a href="#inicio" data-nav="inicio">Inicio</a>
+      <a href="#" data-nav="reciente" hidden></a>
+      <a href="#anteriores" data-nav="anteriores">Jornadas anteriores</a>
+    </nav>
   </div>
 </header>
 
-<main id="inicio">
-  <section class="year" id="jornada" role="tabpanel" aria-live="polite">
-    <p class="loading wrap">Cargando jornada…</p>
-  </section>
-  <noscript><p class="wrap loading">Activa JavaScript para ver el programa de la jornada.</p></noscript>
+<main>
+  <!-- ============ PÁGINA DE INICIO ============ -->
+  <div id="vista-inicio">
+    <section class="home-hero wrap" aria-labelledby="h-home">
+      <p class="eyebrow">Jornadas astronómicas · León, Guanajuato</p>
+      <h1 id="h-home" class="title"><img src="assets/img/titulo-leer-el-cielo.png" alt="Leer el Cielo" width="643" height="247"></h1>
+      <p class="home-lead">Un programa de divulgación de la astronomía en la <b>Biblioteca Central Estatal Wigberto Jiménez Moreno</b>, organizado junto con la <b>División de Ciencias e Ingenierías de la Universidad de Guanajuato</b>, con la participación del <b>Centro de Investigaciones en Óptica (CIO)</b> y otras instituciones.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#destacada" data-scroll>Próxima jornada</a>
+        <a class="btn btn-ghost" href="#anteriores" data-scroll>Jornadas anteriores</a>
+      </div>
+    </section>
+
+    <!-- Banner: jornada más reciente (se genera con el primer elemento de jornadas.json) -->
+    <section class="wrap" id="destacada" aria-label="Jornada más reciente">
+      <p class="loading">Cargando jornadas…</p>
+    </section>
+
+    <section class="block wrap" aria-labelledby="h-que">
+      <h2 id="h-que">Así vivimos cada jornada</h2>
+      <p class="lead">Cada jornada es una tarde-noche gratuita y para toda la familia: escuchamos a especialistas, armamos y jugamos en talleres, viajamos por el planetario y, cuando el clima lo permite, miramos el cielo con telescopios.</p>
+      <ul class="activities" aria-label="Actividades">
+        <li><span class="ico c-yellow"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="12" r="5"/><path d="M15 30h18v12H15zM12 26h24v4H12zM20 22c0-3 2-5 4-5s4 2 4 5"/><path d="M33 9l3-2M34 13h4M33 17l3 2"/></svg></span>Charlas</li>
+        <li><span class="ico c-orange"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 30c-3-2-5-6-5-10a12 12 0 0 1 24 0c0 4-2 8-5 10v5H17z"/><path d="M19 40h10"/><circle cx="24" cy="20" r="4"/><path d="M24 4v3M8 20H5M43 20h-3M12 8l2 2M36 8l-2 2"/></svg></span>Talleres</li>
+        <li><span class="ico c-teal"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34a16 16 0 0 1 32 0z"/><path d="M6 34h36v6H6zM24 18v16M16 22l2 12M32 22l-2 12"/><path d="M12 8l1 3 3 1-3 1-1 3-1-3-3-1 3-1zM36 6l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg></span>Planetario</li>
+        <li><span class="ico c-purple"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 22l24-12 4 8-24 12z"/><path d="M22 27l-8 15M24 27l8 15M23 27v15"/><path d="M38 6l1 2 2 1-2 1-1 2-1-2-2-1 2-1zM40 28l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg></span>Observación astronómica</li>
+      </ul>
+    </section>
+
+    <section class="block wrap" aria-labelledby="h-quien">
+      <h2 id="h-quien">Quiénes lo hacemos</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <span class="num c-yellow">1</span>
+          <h3>Biblioteca Central Estatal Wigberto Jiménez Moreno</h3>
+          <p>Sede de las jornadas y anfitriona del programa: sus salas, la terraza y sus propios telescopios.</p>
+        </article>
+        <article class="card">
+          <span class="num c-orange">2</span>
+          <h3>División de Ciencias e Ingenierías, UG</h3>
+          <p>Investigadoras, investigadores y estudiantes del Departamento de Física (Campus León) imparten charlas, talleres y juegos científicos.</p>
+        </article>
+        <article class="card">
+          <span class="num c-teal">3</span>
+          <h3>Centro de Investigaciones en Óptica</h3>
+          <p>Participa con sus telescopios para la observación y, en ocasiones, con talleres de óptica y astronomía.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Banner + lista: jornadas anteriores (resto de jornadas.json) -->
+    <section class="block wrap" id="anteriores" aria-labelledby="h-ant">
+      <h2 id="h-ant">Jornadas anteriores</h2>
+      <p class="lead">Programas, invitados y pósters de cada jornada. Elige una para ver su página.</p>
+      <ul class="past-grid" id="lista-anteriores"></ul>
+    </section>
+
+    <!-- Jornadas en municipios (entradas con "tipo": "municipios" en jornadas.json) -->
+    <section class="block wrap" id="municipios" aria-labelledby="h-mun" hidden>
+      <h2 id="h-mun">Leer el Cielo en municipios</h2>
+      <p class="lead">Jornadas que llevan el programa a bibliotecas de otros municipios de Guanajuato.</p>
+      <ul class="past-grid" id="lista-municipios"></ul>
+    </section>
+
+    <section class="block wrap organizers" aria-label="Organizan">
+      <p class="footer-title">Organizan</p>
+      <ul class="logos">
+        <li><img src="assets/logos/guanajuato-cultura.png" alt="Gobierno del Estado de Guanajuato, Secretaría de Cultura"></li>
+        <li><img src="assets/logos/ug-campus-leon.png" alt="Universidad de Guanajuato, Campus León, División de Ciencias e Ingenierías, Departamento de Física"></li>
+        <li><img src="assets/logos/biblioteca-central.png" alt="Biblioteca Central Estatal Wigberto Jiménez Moreno"></li>
+        <li><img src="assets/logos/cio.png" alt="Centro de Investigaciones en Óptica, A.C."></li>
+        <li><img src="assets/logos/ilumina.png" alt="Ilumina"></li>
+        <li><img src="assets/logos/secihti-blanco.png" alt="Ciencia y Tecnología, Secretaría de Ciencia, Humanidades, Tecnología e Innovación"></li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============ SUBPÁGINA DE UNA JORNADA (#<id>) ============ -->
+  <div id="vista-jornada" hidden>
+    <div class="wrap crumbs"><a href="#inicio">← Inicio</a><span aria-hidden="true">·</span><a href="#anteriores">Todas las jornadas</a></div>
+    <section class="year" id="jornada" aria-live="polite"></section>
+    <nav class="wrap jornada-nav" id="jornada-nav" aria-label="Otras jornadas"></nav>
+  </div>
+
+  <noscript><p class="wrap loading">Activa JavaScript para ver las jornadas.</p></noscript>
 </main>
 
 <footer class="site-footer">
