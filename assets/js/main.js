@@ -13,7 +13,7 @@
   var jnav = document.getElementById('jornada-nav');
   var navLinks = document.querySelectorAll('.year-tabs [data-nav]');
   var navReciente = document.querySelector('[data-nav="reciente"]');
-  var SECCIONES_INICIO = ['', 'inicio', 'destacada', 'anteriores', 'municipios'];
+  var SECCIONES_INICIO = ['', 'inicio', 'destacada', 'anteriores', 'municipios', 'contacto'];
   var jornadas = [];
   var cache = {};
 
@@ -136,7 +136,7 @@
   function showInicio(seccion) {
     vJornada.hidden = true;
     vInicio.hidden = false;
-    setActive(seccion === 'anteriores' || seccion === 'municipios' ? 'anteriores' : 'inicio');
+    setActive(seccion === 'anteriores' || seccion === 'municipios' ? 'anteriores' : seccion === 'contacto' ? 'contacto' : 'inicio');
     document.title = 'Leer el Cielo · Jornadas Astronómicas';
     var t = seccion && document.getElementById(seccion);
     if (t && seccion !== 'inicio') t.scrollIntoView({ block: 'start' });
