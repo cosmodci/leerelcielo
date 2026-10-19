@@ -247,6 +247,7 @@
   }
 
   function showJornada(j) {
+    document.body.classList.remove('v-inicio');
     vInicio.hidden = true;
     vJornada.hidden = false;
     setActive(j.id === jornadas[0].id ? 'reciente' : 'anteriores');
@@ -267,6 +268,7 @@
   }
 
   function showInicio(seccion) {
+    document.body.classList.add('v-inicio');
     vJornada.hidden = true;
     vInicio.hidden = false;
     setActive(seccion === 'anteriores' || seccion === 'municipios' ? 'anteriores' : seccion === 'contacto' ? 'contacto' : 'inicio');

@@ -273,3 +273,43 @@ section[id],#destacada{scroll-margin-top:84px}
 .share-bar .menu-list{left:auto;right:0}
 .hero-text .fb-actions{margin-top:18px}
 @media (max-width:600px){.share-bar .menu-list{left:0;right:auto}}
+
+/* ================= paleta del INICIO: UG (oro, azul marino) + Secretaría de Cultura (índigo, violeta, verde, ámbar) =================
+   Solo aplica cuando se ve la página de inicio (body.v-inicio). Las subpáginas conservan los colores de su póster. */
+body.v-inicio{
+  --night:#071B2C;      /* azul marino UG, más profundo */
+  --night-2:#0A263D;    /* azul marino UG (Pantone 540) */
+  --indigo:#22175A;     /* índigo de Cultura, oscurecido para fondo */
+  --ink:#F7F4EC;
+  --muted:#BCC3DD;
+  --yellow:#FFD300;     /* oro UG (Pantone 109) */
+  --orange:#F1A31E;     /* ámbar de Cultura */
+  --teal:#01CB81;       /* verde de Cultura */
+  --purple:#8A68FB;     /* violeta de Cultura */
+  --magenta:#8A68FB;
+  --card:rgba(255,255,255,.055);
+  --line:rgba(255,255,255,.14);
+  background:var(--night);
+}
+body.v-inicio .sky{
+  background:
+    radial-gradient(900px 600px at 10% 28%,rgba(138,104,251,.26),transparent 60%),
+    radial-gradient(820px 700px at 90% 78%,rgba(29,78,122,.50),transparent 60%),
+    radial-gradient(700px 420px at 72% 6%,rgba(255,211,0,.05),transparent 60%),
+    linear-gradient(180deg,var(--night) 0%,var(--night-2) 45%,var(--indigo) 100%);
+}
+body.v-inicio .site-header{background:rgba(7,27,44,.80)}
+body.v-inicio .site-footer{background:rgba(4,14,26,.65)}
+body.v-inicio .btn-primary,
+body.v-inicio .year-tabs a[aria-current="page"]{color:#0A263D}
+body.v-inicio .feature-banner{
+  border-color:rgba(255,211,0,.45);
+  background:linear-gradient(135deg,rgba(255,211,0,.10),rgba(138,104,251,.16) 55%,rgba(10,38,61,.55));
+}
+#vista-inicio .c-yellow{background:#FFD300}
+#vista-inicio .c-orange{background:#F1A31E}
+#vista-inicio .c-teal{background:#01CB81}
+#vista-inicio .c-purple{background:#8A68FB}
+/* Íconos y números en azul marino sobre fondos claros (mejor contraste que el blanco) */
+#vista-inicio .ico.c-yellow svg,#vista-inicio .ico.c-orange svg,#vista-inicio .ico.c-teal svg{stroke:#0A263D}
+#vista-inicio .num.c-yellow,#vista-inicio .num.c-orange,#vista-inicio .num.c-teal{color:#0A263D}
