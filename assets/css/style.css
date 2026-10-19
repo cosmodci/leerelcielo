@@ -264,5 +264,5 @@ section[id],#destacada{scroll-margin-top:84px}
 .menu-list a:hover,.menu-list button:hover{background:rgba(255,255,255,.08);color:var(--yellow)}
 
 /* SECIHTI: logo de apoyo, más discreto que el de las instituciones organizadoras */
-.logos img[src*="secihti"]{height:28px;opacity:.75}
-@media (max-width:480px){.logos img[src*="secihti"]{height:22px}}
+.logos img[src*="secihti"]{height:40px;opacity:.85}
+@media (max-width:480px){.logos img[src*="secihti"]{height:30px}}
