@@ -33,6 +33,111 @@
     return new Date(j.fecha + 'T23:59:59') >= hoy;
   }
 
+  // ---------- calendario y compartir (solo para la próxima jornada) ----------
+  // Horas en hora del centro de México (UTC-6, sin horario de verano).
+  function horasEvento(j) {
+    var m = (j.horario || '').match(/(\d{1,2}):(\d{2})\D+(\d{1,2}):(\d{2})/);
+    var ini = m ? m[1].padStart(2, '0') + ':' + m[2] : '16:00';
+    var fin = m ? m[3].padStart(2, '0') + ':' + m[4] : '21:00';
+    return {
+      ini: new Date(j.fecha + 'T' + ini + ':00-06:00'),
+      fin: new Date(j.fecha + 'T' + fin + ':00-06:00')
+    };
+  }
+  function utc(dt) { return dt.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+  function urlJornada(j) { return location.href.split('#')[0] + '#' + j.id; }
+  function textoJornada(j) {
+    return 'Leer el Cielo · ' + (j.tema || j.titulo) + ' · ' + j.fecha_texto +
+      (j.horario ? ', ' + j.horario : '') + ' · ' + j.lugar.replace(/\s*\[POR CONFIRMAR[^\]]*\]/g, '');
+  }
+
+  function googleCal(j) {
+    var h = horasEvento(j);
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent('Leer el Cielo · ' + (j.tema || j.titulo)) +
+      '&dates=' + utc(h.ini) + '/' + utc(h.fin) +
+      '&details=' + encodeURIComponent((j.resumen || '') + '\n\nPrograma: ' + urlJornada(j)) +
+      '&location=' + encodeURIComponent(j.lugar) +
+      '&ctz=America/Mexico_City';
+  }
+
+  function descargarIcs(j) {
+    var h = horasEvento(j);
+    var e = function (s) { return String(s).replace(/[\\;,]/g, '\\$&').replace(/\n/g, '\\n'); };
+    var ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Leer el Cielo//Jornadas//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:' + j.id + '@leerelcielo',
+      'DTSTAMP:' + utc(new Date()),
+      'DTSTART:' + utc(h.ini),
+      'DTEND:' + utc(h.fin),
+      'SUMMARY:' + e('Leer el Cielo · ' + (j.tema || j.titulo)),
+      'DESCRIPTION:' + e((j.resumen || '') + '\n\nPrograma: ' + urlJornada(j)),
+      'LOCATION:' + e(j.lugar),
+      'URL:' + urlJornada(j),
+      'END:VEVENT', 'END:VCALENDAR'
+    ].join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+    a.download = 'leer-el-cielo-' + j.id + '.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+
+  var ICO_CAL = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg>';
+  var ICO_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
+
+  function accionesEvento(j) {
+    var u = encodeURIComponent(urlJornada(j));
+    var t = encodeURIComponent(textoJornada(j));
+    return '<div class="fb-actions" data-jornada="' + esc(j.id) + '">' +
+      '<details class="menu">' +
+        '<summary class="btn btn-ghost btn-sm">' + ICO_CAL + 'Añadir a mi calendario</summary>' +
+        '<div class="menu-list">' +
+          '<a href="' + esc(googleCal(j)) + '" target="_blank" rel="noopener">Google Calendar</a>' +
+          '<button type="button" data-accion="ics">Apple / Outlook (.ics)</button>' +
+        '</div>' +
+      '</details>' +
+      '<details class="menu" data-share>' +
+        '<summary class="btn btn-ghost btn-sm">' + ICO_SHARE + 'Compartir</summary>' +
+        '<div class="menu-list">' +
+          '<a href="https://wa.me/?text=' + t + '%20' + u + '" target="_blank" rel="noopener">WhatsApp</a>' +
+          '<a href="https://www.facebook.com/sharer/sharer.php?u=' + u + '" target="_blank" rel="noopener">Facebook</a>' +
+          '<a href="https://twitter.com/intent/tweet?text=' + t + '&url=' + u + '" target="_blank" rel="noopener">X (Twitter)</a>' +
+          '<button type="button" data-accion="copiar">Copiar enlace</button>' +
+        '</div>' +
+      '</details>' +
+    '</div>';
+  }
+
+  document.addEventListener('click', function (e) {
+    var cont = e.target.closest('.fb-actions');
+    // Cierra los menús abiertos al hacer clic fuera.
+    document.querySelectorAll('.fb-actions details[open]').forEach(function (d) {
+      if (!d.contains(e.target)) d.removeAttribute('open');
+    });
+    if (!cont) return;
+    var j = jornadas.filter(function (x) { return x.id === cont.dataset.jornada; })[0];
+    if (!j) return;
+
+    // En celulares: menú nativo de compartir.
+    var sum = e.target.closest('[data-share] > summary');
+    if (sum && navigator.share) {
+      e.preventDefault();
+      navigator.share({ title: 'Leer el Cielo', text: textoJornada(j), url: urlJornada(j) }).catch(function () {});
+      return;
+    }
+    var b = e.target.closest('[data-accion]');
+    if (!b) return;
+    if (b.dataset.accion === 'ics') descargarIcs(j);
+    if (b.dataset.accion === 'copiar') {
+      var listo = function () { b.textContent = '¡Enlace copiado!'; setTimeout(function () { b.textContent = 'Copiar enlace'; }, 2000); };
+      if (navigator.clipboard) navigator.clipboard.writeText(urlJornada(j)).then(listo, function () { prompt('Copia este enlace:', urlJornada(j)); });
+      else prompt('Copia este enlace:', urlJornada(j));
+    }
+    b.closest('details').removeAttribute('open');
+  });
+
   // ---------- inicio ----------
   function renderInicio() {
     var d = jornadas[0];
@@ -60,6 +165,7 @@
             '<a class="btn btn-primary" href="#' + esc(d.id) + '">Ver programa completo</a>' +
             (futura ? '<p class="free free-sm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.6L21 9.3l-5 4.4 1.6 6.8L12 17l-5.6 3.5L8 13.7 3 9.3l6.4-.7z"/></svg>Entrada libre · actividades para toda la familia</p>' : '') +
           '</div>' +
+          (futura ? accionesEvento(d) : '') +
         '</div>' +
       '</article>' +
       // Banner hacia las jornadas anteriores
