@@ -267,3 +267,9 @@ section[id],#destacada{scroll-margin-top:84px}
 /* SECIHTI: logo de apoyo, un poco más discreto que los de las instituciones organizadoras */
 .logos img[src*="secihti"]{height:40px}
 @media (max-width:480px){.logos img[src*="secihti"]{height:30px}}
+.share-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;margin-top:20px;padding:4px 4px 0}
+.share-bar p{margin:0;color:var(--muted);font-size:17px}
+.share-bar .fb-actions{margin-top:0}
+.share-bar .menu-list{left:auto;right:0}
+.hero-text .fb-actions{margin-top:18px}
+@media (max-width:600px){.share-bar .menu-list{left:0;right:auto}}

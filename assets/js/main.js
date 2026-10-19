@@ -88,26 +88,35 @@
   var ICO_CAL = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg>';
   var ICO_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
 
-  function accionesEvento(j) {
-    var u = encodeURIComponent(urlJornada(j));
-    var t = encodeURIComponent(textoJornada(j));
-    return '<div class="fb-actions" data-jornada="' + esc(j.id) + '">' +
-      '<details class="menu">' +
+  function urlInicio() { return location.href.split('#')[0]; }
+
+  function menuCalendario(j) {
+    return '<details class="menu">' +
         '<summary class="btn btn-ghost btn-sm">' + ICO_CAL + 'Añadir a mi calendario</summary>' +
         '<div class="menu-list">' +
           '<a href="' + esc(googleCal(j)) + '" target="_blank" rel="noopener">Google Calendar</a>' +
           '<button type="button" data-accion="ics">Apple / Outlook (.ics)</button>' +
         '</div>' +
-      '</details>' +
-      '<details class="menu" data-share>' +
-        '<summary class="btn btn-ghost btn-sm">' + ICO_SHARE + 'Compartir</summary>' +
+      '</details>';
+  }
+
+  function menuCompartir(url, texto, etiqueta) {
+    var u = encodeURIComponent(url), t = encodeURIComponent(texto);
+    return '<details class="menu" data-share data-url="' + esc(url) + '" data-text="' + esc(texto) + '">' +
+        '<summary class="btn btn-ghost btn-sm">' + ICO_SHARE + esc(etiqueta || 'Compartir') + '</summary>' +
         '<div class="menu-list">' +
           '<a href="https://wa.me/?text=' + t + '%20' + u + '" target="_blank" rel="noopener">WhatsApp</a>' +
           '<a href="https://www.facebook.com/sharer/sharer.php?u=' + u + '" target="_blank" rel="noopener">Facebook</a>' +
           '<a href="https://twitter.com/intent/tweet?text=' + t + '&url=' + u + '" target="_blank" rel="noopener">X (Twitter)</a>' +
           '<button type="button" data-accion="copiar">Copiar enlace</button>' +
         '</div>' +
-      '</details>' +
+      '</details>';
+  }
+
+  // Calendario + compartir la subpágina de una jornada que aún no ocurre.
+  function accionesJornada(j) {
+    return '<div class="fb-actions" data-jornada="' + esc(j.id) + '">' +
+      menuCalendario(j) + menuCompartir(urlJornada(j), textoJornada(j), 'Compartir esta jornada') +
     '</div>';
   }
 
@@ -118,23 +127,26 @@
       if (!d.contains(e.target)) d.removeAttribute('open');
     });
     if (!cont) return;
-    var j = jornadas.filter(function (x) { return x.id === cont.dataset.jornada; })[0];
-    if (!j) return;
 
     // En celulares: menú nativo de compartir.
     var sum = e.target.closest('[data-share] > summary');
     if (sum && navigator.share) {
+      var ds = sum.parentNode.dataset;
       e.preventDefault();
-      navigator.share({ title: 'Leer el Cielo', text: textoJornada(j), url: urlJornada(j) }).catch(function () {});
+      navigator.share({ title: 'Leer el Cielo', text: ds.text, url: ds.url }).catch(function () {});
       return;
     }
     var b = e.target.closest('[data-accion]');
     if (!b) return;
-    if (b.dataset.accion === 'ics') descargarIcs(j);
+    if (b.dataset.accion === 'ics') {
+      var j = jornadas.filter(function (x) { return x.id === cont.dataset.jornada; })[0];
+      if (j) descargarIcs(j);
+    }
     if (b.dataset.accion === 'copiar') {
+      var url = b.closest('[data-share]').dataset.url;
       var listo = function () { b.textContent = '¡Enlace copiado!'; setTimeout(function () { b.textContent = 'Copiar enlace'; }, 2000); };
-      if (navigator.clipboard) navigator.clipboard.writeText(urlJornada(j)).then(listo, function () { prompt('Copia este enlace:', urlJornada(j)); });
-      else prompt('Copia este enlace:', urlJornada(j));
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(listo, function () { prompt('Copia este enlace:', url); });
+      else prompt('Copia este enlace:', url);
     }
     b.closest('details').removeAttribute('open');
   });
@@ -166,9 +178,19 @@
             '<a class="btn btn-primary" href="#' + esc(d.id) + '">Ver programa completo</a>' +
             (futura ? '<p class="free free-sm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.6L21 9.3l-5 4.4 1.6 6.8L12 17l-5.6 3.5L8 13.7 3 9.3l6.4-.7z"/></svg>Entrada libre · actividades para toda la familia</p>' : '') +
           '</div>' +
-          (futura ? accionesEvento(d) : '') +
+          (futura ? '<div class="fb-actions" data-jornada="' + esc(d.id) + '">' + menuCalendario(d) + '</div>' : '') +
         '</div>' +
       '</article>' +
+      // Compartir la página principal (fuera del recuadro de la jornada)
+      '<div class="share-bar">' +
+        '<p>¿Te gusta Leer el Cielo? Compártelo con tu familia y amistades.</p>' +
+        '<div class="fb-actions">' +
+          menuCompartir(urlInicio(),
+            'Leer el Cielo · Jornadas astronómicas gratuitas en la Biblioteca Central Estatal Wigberto Jiménez Moreno, León' +
+            (futura ? '. Próxima: ' + (d.tema || d.titulo) + ', ' + d.fecha_texto : ''),
+            'Compartir Leer el Cielo') +
+        '</div>' +
+      '</div>' +
       // Banner hacia las jornadas anteriores
       (jornadas.length > 1 ?
         '<a class="past-banner" href="#anteriores" data-scroll>' +
@@ -235,6 +257,10 @@
     return load(j).then(function (html) {
       panel.innerHTML = html;
       absolutize(panel, new URL(j.archivo, location.href));
+      if (esFutura(j)) {
+        var anchor = panel.querySelector('.hero-text .ctas') || panel.querySelector('.hero-text .facts');
+        if (anchor) anchor.insertAdjacentHTML('afterend', accionesJornada(j));
+      }
     }).catch(function () {
       panel.innerHTML = '<p class="loading wrap">No se pudo cargar esta jornada. Intenta recargar la página.</p>';
     });
