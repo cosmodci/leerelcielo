@@ -4,7 +4,8 @@
 // 3. Subpágina (#<id>, p. ej. #otono-2026): descarga jornadas/<id>/jornada.html y lo muestra.
 //    Los enlaces antiguos tipo #otono-2026 siguen funcionando.
 // Para añadir una jornada: crea jornadas/<id>/ (jornada.html, poster.jpg, poster-mini.jpg)
-// y agrega su entrada AL INICIO de jornadas.json. Usa "tipo": "municipios" para las
+// y agrega su entrada AL INICIO de jornadas.json. Opcional: "postal" (imagen cuadrada) se usa
+// en el banner del inicio en lugar del póster. Usa "tipo": "municipios" para las
 // jornadas fuera de la Biblioteca Central (aparecen en su propia sección del inicio).
 (function () {
   var vInicio = document.getElementById('vista-inicio');
@@ -150,7 +151,7 @@
     box.innerHTML =
       '<article class="feature-banner">' +
         '<a class="fb-poster" href="#' + esc(d.id) + '" tabindex="-1" aria-hidden="true">' +
-          '<img src="' + esc(d.poster) + '" alt="" width="520" height="800"></a>' +
+          (d.postal ? '<img src="' + esc(d.postal) + '" alt="" width="700" height="700">' : '<img src="' + esc(d.poster) + '" alt="" width="520" height="800">') + '</a>' +
         '<div class="fb-body">' +
           '<p class="fb-kicker">' + (futura ? '<span class="dot" aria-hidden="true"></span>' : '') + etiqueta + '</p>' +
           '<h2 class="fb-title">' + esc(d.tema || d.titulo) + '</h2>' +
