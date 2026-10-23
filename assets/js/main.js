@@ -246,7 +246,25 @@
       (newer ? '<a class="jn-next" href="#' + esc(newer.id) + '"><small>Jornada siguiente →</small>' + esc(newer.pestana) + '</a>' : '<span></span>');
   }
 
+  // ---------- contador de visitas (GoatCounter) ----------
+  // Cuenta una visita por vista: el inicio como "/" y cada jornada como "/#<id>".
+  // Moverse entre secciones del inicio (#anteriores, #contacto…) no suma visitas.
+  var ultimaVista = null, pendiente = null;
+  function contar(vista, titulo) {
+    if (vista === ultimaVista) return;
+    ultimaVista = vista;
+    var datos = { path: vista === 'inicio' ? '/' : '/#' + vista, title: titulo };
+    if (window.goatcounter && window.goatcounter.count) window.goatcounter.count(datos);
+    else pendiente = datos;   // el script aún no carga: se envía al cargar
+  }
+  (function esperarGoatCounter(n) {
+    if (window.goatcounter && window.goatcounter.count) {
+      if (pendiente) { window.goatcounter.count(pendiente); pendiente = null; }
+    } else if (n < 40) setTimeout(function () { esperarGoatCounter(n + 1); }, 250);
+  })(0);
+
   function showJornada(j) {
+    contar(j.id, 'Leer el Cielo · ' + (j.titulo || j.pestana));
     document.body.classList.remove('v-inicio');
     vInicio.hidden = true;
     vJornada.hidden = false;
@@ -268,6 +286,7 @@
   }
 
   function showInicio(seccion) {
+    contar('inicio', 'Leer el Cielo · Inicio');
     document.body.classList.add('v-inicio');
     vJornada.hidden = true;
     vInicio.hidden = false;
