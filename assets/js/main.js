@@ -263,6 +263,14 @@
     } else if (n < 40) setTimeout(function () { esperarGoatCounter(n + 1); }, 250);
   })(0);
 
+  // Clics en enlaces marcados con data-gc (p. ej. Instagram, página de la DCI): se registran
+  // como eventos en GoatCounter con el nombre "clic: <data-gc>".
+  document.addEventListener('click', function (e) {
+    var l = e.target.closest('a[data-gc]');
+    if (!l || !(window.goatcounter && window.goatcounter.count)) return;
+    window.goatcounter.count({ path: 'clic: ' + l.dataset.gc, title: l.href, event: true });
+  });
+
   function showJornada(j) {
     contar(j.id, 'Leer el Cielo · ' + (j.titulo || j.pestana));
     document.body.classList.remove('v-inicio');
